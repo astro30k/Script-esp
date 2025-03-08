@@ -1,0 +1,43 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
+local enabled = true
+
+local function ToggleHUD()
+    enabled = not enabled
+end
+
+local function GetDistance(player, target)
+    return (player.Character.PrimaryPart.Position - target.Character.PrimaryPart.Position).Magnitude
+end
+
+local function UpdateHUD()
+    if enabled then
+        for _, player in ipairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer then
+                local distance = GetDistance(LocalPlayer, player)
+                local health = player.Character.Humanoid.Health
+
+                local textLabel = player.Character:FindFirstChild("DistanceLabel")
+                if textLabel then
+                    textLabel.Text = string.format("Distance: %.2fm\nHealth: %.2f%%", distance, health)
+                else
+                    local newLabel = Instance.new("TextLabel")
+                    newLabel.Name = "DistanceLabel"
+                    newLabel.Parent = player.Character
+                    newLabel.Position = Vector3.new(0, 1.5, 0)
+                    newLabel.Size = UDim2.new(0, 100, 0, 50)
+                    newLabel.BackgroundTransparency = 1
+                    newLabel.TextColor3 = Color3.new(1, 1, 1)
+                    newLabel.TextSize = 14
+                    newLabel.Text = string.format("Distance: %.2fm\nHealth: %.2f%%", distance, health)
+                end
+            end
+        end
+    end
+end
+
+while true do
+    UpdateHUD()
+    wait(0.1)
+end
